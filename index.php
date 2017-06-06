@@ -1,16 +1,22 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
 spl_autoload_register(function ($name) {
-    $name = 'src/' . str_replace('Bittr\\', DIRECTORY_SEPARATOR, $name) . '.php';
+    $name = 'src' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name) . '.php';
     include $name;
 });
 
-Session::id('00ea34c53f4c67e1159334d1a605bb2a');
+Session::registerErrorHandler(function($error, $error_code)
+{
+    new Dump($error, $error_code);
+});
+
 $session = Session::start();
 
-$session->registerErrorHandler(function($error, $error_code)
-{
-    var_dump($error, $error_code);
-});
+
 
 
 

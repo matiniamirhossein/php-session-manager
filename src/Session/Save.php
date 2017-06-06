@@ -27,7 +27,7 @@ class Save
             {
                 if ($this->config->session['_validate:ip'] != $ip)
                 {
-                    $this->_error('Session IP address mismatch', 1);
+                    $this->error('Session IP address mismatch', 1);
                     return false;
                 }
             }
@@ -39,9 +39,9 @@ class Save
             $browser = $this->browser();
             if (isset($this->config->session['_validate:browser']))
             {
-                if ($this->config->session['_validate:ip'] != $browser)
+                if ($this->config->session['_validate:browser'] != $browser)
                 {
-                    $this->_error('Session user agent string mismatch', 2);
+                    $this->error('Session user agent string mismatch', 2);
                     return false;
                 }
             }
@@ -58,9 +58,8 @@ class Save
      * @param string $error
      * @param int $error_code
      */
-    private function _error(string $error, int $error_code): void
+    private function error(string $error, int $error_code): void
     {
-        var_dump($this->config);
         if (isset($this->config->error_handler))
         {
             call_user_func_array($this->config->error_handler, [$error, $error_code]);
@@ -110,7 +109,7 @@ class Save
         #destroy session if unique identifier fails to sync
         if ( ! $this->checkSession())
         {
-            #$this->destroy();
+            $this->destroy();
             return;
         }
     }
@@ -279,13 +278,8 @@ class Save
      * Clears all the data is a specific namespace or segment
      * @param string $segment
      */
-    public function clear(string $segment = ''): void
+    public function clear(string $segment = '')
     {
-        if (session_status() !== PHP_SESSION_ACTIVE)
-        {
-            session_start();
-        }
-
         $namespace = $this->config->namespace;
         if ($segment !== '')
         {
@@ -307,9 +301,8 @@ class Save
             }
         }
 
-        unset($_SESSION[$this->config->namespace]);
-        $_SESSION = $this->config->session;
-        session_write_close();
+        unset($this->config->session[$this->config->namespace]);
+        $this->commit();
     }
 
     /**
@@ -340,13 +333,4 @@ class Save
         $this->config->session = [];
     }
 
-    /**
-     * Allows error custom error handling
-     *
-     * @param callable $error_handler
-     */
-    public function registerErrorHandler(callable $error_handler): void
-    {
-        $this->config->error_handler = $error_handler;
-    }
 }

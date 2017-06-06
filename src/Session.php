@@ -14,7 +14,7 @@ class Session
         $path = __DIR__ . $DS . 'Session' . $DS;
         $config = include($path . 'config.php');
 
-        self::$initialized = $config[$config['driver']];
+        self::$initialized = $config;
         self::$class = ucfirst($config['driver']);
 
         if( ! is_dir($path . self::$class))
@@ -42,11 +42,16 @@ class Session
         }
 
         $class = '\Session\\' . self::$class . '\Handler';
-        ini_set('session.save_handler', strtolower($config['driver']));
+        //ini_set('session.save_handler', 'files');
         session_set_save_handler(new $class(self::$initialized), true);
 
     }
 
+    /**
+     * sets a new session name
+     *
+     * @param string $name
+     */
     public static function name(string $name)
     {
         if (empty(self::$initialized))
@@ -68,8 +73,18 @@ class Session
         }
     }
 
+    /**
+     * Sets new session id
+     *
+     * @param string $id
+     */
     public static function id(string $id)
     {
+        if (empty(self::$initialized))
+        {
+            self::init();
+        }
+        
         if (self::$started)
         {
             throw new \RuntimeException('Session is active. The session id must be set before Session::start().');
@@ -88,6 +103,11 @@ class Session
         }
     }
 
+    /**
+     * starts a new session
+     *
+     * @param string $namespace
+     */
     public static function start(string $namespace = '__GLOBAL')
     {
         if (empty(self::$initialized))
@@ -100,10 +120,28 @@ class Session
         return new \Session\Save((object) self::$initialized);
     }
 
+    /**
+     * Reset all session configuration settings.
+     */
     public static function reset(): self
     {
         self::$initialized = [];
         return new self;
+    }
+    
+    /**
+     * Allows error custom error handling
+     *
+     * @param callable $error_handler
+     */
+    public static function registerErrorHandler(callable $error_handler)
+    {
+        if (empty(self::$initialized))
+        {
+            self::init();
+        }
+        
+        self::$initialized['error_handler'] = $error_handler;
     }
 
     /**
