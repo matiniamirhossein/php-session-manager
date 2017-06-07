@@ -9,12 +9,31 @@ spl_autoload_register(function ($name) {
     include $name;
 });
 
+
 Session::registerErrorHandler(function($error, $error_code)
 {
     new Dump($error, $error_code);
 });
 
+
 $session = Session::start();
+$session->name = 'chrys';
+$session->flash->name = 'ugwu';
+
+$segment = $session->segment('Users');
+$segment->name = 'chrys';
+$segment->flash->name = 'ugwu';
+
+
+$session->commit();
+
+$session->remove->flash->name;
+$segment->remove->flash->name;
+
+
+new Dump($session->all());
+
+
 
 
 

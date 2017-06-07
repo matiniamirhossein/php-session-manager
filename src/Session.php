@@ -8,6 +8,8 @@ class Session
 
     private static $class = null;
 
+    private static $ssl_enabled = true;
+
     private static function init()
     {
         $DS = DIRECTORY_SEPARATOR;
@@ -23,10 +25,26 @@ class Session
         }
         elseif (self::$initialized['encrypt_data'] === true && ! extension_loaded('openssl'))
         {
+            self::$ssl_enabled = false;
             trigger_error("You don't have openssl enabled. So session data wont be encrypted.", E_USER_NOTICE);
         }
 
-        $save_path = self::$initialized['save_path'];
+        session_cache_limiter($config['cache_limiter']);
+        $secured = $config['secure'];
+        if ($secured !== true && $secured !== false && $secured !== null)
+        {
+            throw new RuntimeException('config.secure expected value to be a boolean or null');
+        }
+        if ($secured == null)
+        {
+            $secured = ( ! empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'] == 'on'));
+        }
+
+        ini_set('session.use_cookies', 1);
+        $expire =  ($config['expiration'] == 0) ? 0 : time() + $config['expiration'];
+        session_set_cookie_params($expire, $config['path'], $config['domain'], $secured, $config['http_only']);
+
+        $save_path = $config['save_path'];
         if (trim($save_path) !== '')
         {
             if (is_dir($save_path))
@@ -42,35 +60,8 @@ class Session
         }
 
         $class = '\Session\\' . self::$class . '\Handler';
-        //ini_set('session.save_handler', 'files');
         session_set_save_handler(new $class(self::$initialized), true);
 
-    }
-
-    /**
-     * sets a new session name
-     *
-     * @param string $name
-     */
-    public static function name(string $name)
-    {
-        if (empty(self::$initialized))
-        {
-            self::init();
-        }
-
-        if (self::$started)
-        {
-            throw new \RuntimeException('Session is active. The session name must be set before Session::start().');
-        }
-        elseif (preg_match('/^[a-zA-Z]([\w]*)$/', $name) < 1)
-        {
-            throw new \InvalidArgumentException('Invalid Session name. (allows [\w] and can\'t consist of numbers only. must have a letter)');
-        }
-        else
-        {
-            self::$initialized['name'] = $name;
-        }
     }
 
     /**
@@ -89,6 +80,10 @@ class Session
         {
             throw new \RuntimeException('Session is active. The session id must be set before Session::start().');
         }
+        elseif (strlen($id) > 500)
+        {
+            throw new \RuntimeException('Session id cant be above 500 characters long');
+        }
         elseif (headers_sent($filename, $line_num))
         {
             throw new \RuntimeException(sprintf('ID must be set before any output is sent to the browser (file: %s, line: %s)', $filename, $line_num));
@@ -103,12 +98,14 @@ class Session
         }
     }
 
+
     /**
      * starts a new session
      *
      * @param string $namespace
+     * @return \Session\Save
      */
-    public static function start(string $namespace = '__GLOBAL')
+    public static function start(string $namespace = '__GLOBAL'): \Session\Save
     {
         if (empty(self::$initialized))
         {
@@ -147,13 +144,19 @@ class Session
     /**
      * decrypt AES 256
      *
-     * @param string $edata
+     * @param string $data
      * @param string $password
      * @return string data
      */
-    public static function decrypt(string $edata, string $password): string
+    public static function decrypt(string $data): string
     {
-        $data = base64_decode($edata);
+        if ( ! self::$initialized['encrypt_data'] || ! self::$ssl_enabled)
+        {
+            return $data;
+        }
+
+        $password = self::$initialized['key'];
+        $data = base64_decode($data);
         $salt = substr($data, 0, 16);
         $ct = substr($data, 16);
 
@@ -181,8 +184,14 @@ class Session
      * @param string $password
      * @return string encrypted data
      */
-    public static function encrypt(string $data, string $password): string
+    public static function encrypt(string $data): string
     {
+        if ( ! self::$initialized['encrypt_data'] || ! self::$ssl_enabled)
+        {
+            return $data;
+        }
+
+        $password = self::$initialized['key'];
         // Set a random salt
         $salt = openssl_random_pseudo_bytes(16);
         $salted = '';

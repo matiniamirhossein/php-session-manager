@@ -48,7 +48,7 @@ class Save
             $this->config->session['_validate:browser'] = $browser;
         }
 
-        $this->commit();
+
         return true;
     }
 
@@ -71,36 +71,19 @@ class Save
      */
     private function init()
     {
-        session_cache_limiter($this->config->cache_limiter);
-        $secured = $this->config->secure;
-        if ($secured !== true && $secured !== false && $secured !== null)
-        {
-            throw new RuntimeException('config.secure expected value to be a boolean or null');
-        }
-        if ($secured == null)
-        {
-            $secured = ( ! empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'] == 'on'));
-        }
-
-        $expire =  ($this->config->expiration == 0) ? 0 : time() + $this->config->expiration;
-        session_set_cookie_params($expire, $this->config->path, $this->config->domain, $secured, $this->config->http_only);
-
         if (trim($this->config->name) != '')
         {
             session_name($this->config->name);
         }
 
         session_start();
-        setcookie($this->config->name, session_id(), $expire, $this->config->path, $this->config->domain, $secured, $this->config->http_only);
+
         # store current session ID
-        if (isset($this->config->sess_id))
-        {
-            $this->config->sess_id = session_id($this->config->sess_id);
-        }
-        else
-        {
-            $this->config->sess_id = session_id();
-        }
+        $this->config->sess_id = session_id();
+
+        $_ = session_get_cookie_params();
+        setcookie($this->config->name, $this->config->sess_id, $_['lifetime'], $_['path'], $_['domain'], $_['secure'], $_['httponly']);
+        $this->config->session_params = $_;
 
         $this->config->session = $_SESSION;
         # Remove the lock from the session file
@@ -327,8 +310,8 @@ class Save
         $_SESSION = [];
         session_destroy();
         session_write_close();
-        $params = session_get_cookie_params();
-        setcookie($this->config->name, '', -1, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        $_ = $this->config->session_params;
+        setcookie($this->config->name, '', -1, $_['path'], $_['domain'], $_['secure'], $_['httponly']);
         # Reset the session data
         $this->config->session = [];
     }
