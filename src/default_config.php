@@ -7,7 +7,7 @@
     'start_options' => [
         'name'              => 'SESS_ID',           # Session name
         'save_path'         => '',                  # This is the path where the files are created.
-        'cache_limiter'     => 'private',           # Cache control method used for session pages.
+        'cache_limiter'     => 'nocache',           # Cache control method used for session pages.
         'cookie_secure'     => '',                  # Specifies whether cookies should only be sent over secure connections.
         'cookie_domain'     => '',                  # Specifies the domain to set in the session cookie.
         'cookie_path'       => '/',                 # Specifies path to set in the session cookie.

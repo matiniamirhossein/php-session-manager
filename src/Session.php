@@ -125,13 +125,9 @@ class Session
      *
      * @return mixed
      */
-    public function get(string $name)
+    public function get(string $name, $default = null)
     {
-        if ( ! isset($this->data[$this->segment][0][$name])) {
-            throw new RuntimeException("\"{$name}\" does not exist in current session segment.");
-        }
-
-        return $this->data[$this->segment][0][$name];
+        return $this->data[$this->segment][0][$name] ?? $default;
     }
 
     /**
@@ -172,20 +168,6 @@ class Session
     }
 
     /**
-     * Get a value from current segment storage or default to $default
-     *  if specified name was not found.
-     *
-     * @param string $name      The name of the value to retrieve.
-     * @param null   $default   The fallback value if $name value was not found.
-     *
-     * @return mixed|null
-     */
-    public function getOrDefault(string $name, $default = null)
-    {
-        return $this->data[$this->segment][0][$name] ?? $default;
-    }
-
-    /**
      * Sets flash a value in current segment storage.
      *  Note: Flash values are deleted after retrieval.
      *
@@ -209,30 +191,12 @@ class Session
      *
      * @return mixed
      */
-    public function getFlash(string $name)
+    public function getFlash(string $name, $default = null)
     {
         if ( ! isset($this->data[$this->segment][1][$name])) {
             throw new RuntimeException("flash(\"{$name}\") does not exist in current session segment.");
         }
 
-        $value =  $this->data[$this->segment][1][$name];
-        unset($this->data[$this->segment][1][$name]);
-        $this->changed = true;
-
-        return $value;
-    }
-
-    /**
-     * Get a flash value from current segment storage or default to $default
-     *  if specified name was not found.
-     *
-     * @param string $name      The name of the value to retrieve.
-     * @param null   $default   The fallback value if $name value was not found.
-     *
-     * @return mixed|null
-     */
-    public function getFlashOrDefault(string $name, $default = null)
-    {
         $value =  $this->data[$this->segment][1][$name] ?? $default;
         unset($this->data[$this->segment][1][$name]);
         $this->changed = true;
