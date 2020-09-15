@@ -107,7 +107,7 @@ class Session
      */
     public function push(string $name, $value): Session
     {
-        $values = $this->getOrDefault($name, []);
+        $values = $this->get($name, []);
         if ( ! is_array($values))
         {
             $values = [$values];
