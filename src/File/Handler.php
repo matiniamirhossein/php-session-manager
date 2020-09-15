@@ -29,7 +29,10 @@ class Handler extends SetGet implements SessionHandlerInterface
 
     public function read($id): string
     {
-        $data = (string) @file_get_contents("{$this->savePath}/sess_{$id}");
+        $data = '';
+        if(is_file("{$this->savePath}/sess_{$id}")){
+            $data = (string) file_get_contents("{$this->savePath}/sess_{$id}");
+        }
         return ($data == '') ? '' : $this->get($data);
     }
 
