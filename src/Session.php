@@ -232,7 +232,7 @@ class Session
      */
     public function exist(string $name, bool $in_flash = false): bool
     {
-        return isset($this->data[$this->segment][$in_flash ? 0 : 1][$name]);
+        return array_key_exists($name, $this->data[$this->segment][$in_flash ? 1 : 0]);
     }
 
     /**
