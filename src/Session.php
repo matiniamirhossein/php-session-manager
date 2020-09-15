@@ -79,7 +79,9 @@ class Session
     public function segment(string $name): Session
     {
         $this->segment = $name;
-
+        if(!array_key_exists($name, $this->data)){
+            $this->data[$name] = [[], []];
+        }
         return $this;
     }
 
