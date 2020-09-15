@@ -1,5 +1,5 @@
 {
-    "name": "ghostff/session",
+    "name": "matiniamirhossein/php-session-manager",
     "description": "PHP Session Manager (non-blocking, flash, segment, session encryption).",
     "type": "library",
     "keywords" : ["session", "segment", "secured-session", "session-manger", "non-blocking", "memcached", "redis", "sql"],
