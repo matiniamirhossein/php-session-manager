@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Session\Memcached;
+namespace PHPSessionManager\Memcached;
 
-use Memcached, Session, SessionHandlerInterface;
+use Memcached, SessionHandlerInterface;
+use PHPSessionManager\SetGet;
 use RuntimeException;
 
-class Handler extends Session\SetGet implements SessionHandlerInterface
+class Handler extends SetGet implements SessionHandlerInterface
 {
     private $conn;
     private $name;

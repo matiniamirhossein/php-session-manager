@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Session\File;
+namespace PHPSessionManager\File;
 
-use Session, SessionHandlerInterface;
+use PHPSessionManager\SetGet;
+use SessionHandlerInterface;
 
-class Handler extends Session\SetGet implements SessionHandlerInterface
+class Handler extends SetGet implements SessionHandlerInterface
 {
     private $savePath;
 

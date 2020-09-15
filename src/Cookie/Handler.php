@@ -39,11 +39,12 @@
 
 declare(strict_types=1);
 
-namespace Session\Cookie;
+namespace PHPSessionManager\Cookie;
 
-use Session, SessionHandlerInterface;
+use PHPSessionManager\SetGet;
+use SessionHandlerInterface;
 
-class Handler extends Session\SetGet implements SessionHandlerInterface
+class Handler extends SetGet implements SessionHandlerInterface
 {
     public function __construct(array $config)
     {

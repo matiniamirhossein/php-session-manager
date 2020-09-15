@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Session\Redis;
+namespace PHPSessionManager\Redis;
 
-use Redis, Session, SessionHandlerInterface;
+use PHPSessionManager\SetGet;
+use Redis, SessionHandlerInterface;
 use RuntimeException;
 
-class Handler extends Session\SetGet implements SessionHandlerInterface
+class Handler extends SetGet implements SessionHandlerInterface
 {
     private $conn;
     private $name;

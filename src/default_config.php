@@ -1,5 +1,5 @@
 <?php return [
-    'driver'        => Session\File\Handler::class, # Name of session driver to use: Session\[File|MySql|Cookie|Redis|Memcached]\Handler::class
+    'driver'        => PHPSessionManager\File\Handler::class, # Name of session driver to use: Session\[File|MySql|Cookie|Redis|Memcached]\Handler::class
     'encrypt_data'  => false,                       # Allow encryption of session data.
     'salt_key'      => 'secret_salt_key',           # Encryption key. ineffective if 'encrypt_data' = false
 

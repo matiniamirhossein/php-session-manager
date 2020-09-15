@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Session\MySql;
+namespace PHPSessionManager\MySql;
 
-use PDO, PDOException, Session, SessionHandlerInterface;
+use PDO, PDOException, SessionHandlerInterface;
+use PHPSessionManager\SetGet;
 
-class Handler extends Session\SetGet implements SessionHandlerInterface
+class Handler extends SetGet implements SessionHandlerInterface
 {
     private $conn;
     private $table;

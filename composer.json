@@ -8,17 +8,18 @@
         {
             "name": "Chrys Ugwu",
             "email": "frankchris@hotmail.com"
+        },
+        {
+            "name": "Amirhossein Matin",
+            "email": "matiniamirhossein@gmail.com"
         }
     ],
     "require": {
 		"php": ">=7.0.0"
 	},
 	"autoload" : {
-	    "classmap": [
-		  "src/Session.php"
-		],
 		"psr-4" : {
-		  	"Session\\" : "src/Session"
+		  	"PHPSessionManager\\" : "src/"
 		}
     }
 }

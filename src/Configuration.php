@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Session;
+namespace PHPSessionManager;
 
 class Configuration
 {
@@ -21,7 +21,7 @@ class Configuration
         self::$instance = new self(include($config_path));
     }
 
-    public static function getConfigurations(): Configuration
+    public static function getConfigurations()
     {
         if (self::$instance == null)
         {
@@ -31,7 +31,7 @@ class Configuration
         return self::$instance;
     }
 
-    public static function set(array $key_value): Configuration
+    public static function set(array $key_value)
     {
         $instance         = self::getConfigurations();
         $instance->config = $key_value + $instance->config;

@@ -1,7 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use Session\Configuration;
+namespace PHPSessionManager;
+
+use PHPSessionManager\Configuration;
+
+use RuntimeException;
+use InvalidArgumentException;
 
 class Session
 {
@@ -73,11 +78,9 @@ class Session
      */
     public function segment(string $name): Session
     {
-        $session = new self();
-        $session->data =& $this->data;
-        $session->segment = $name;
+        $this->segment = $name;
 
-        return $session;
+        return $this;
     }
 
     /**
@@ -264,6 +267,19 @@ class Session
     public function exist(string $name, bool $in_flash = false): bool
     {
         return isset($this->data[$this->segment][$in_flash ? 0 : 1][$name]);
+    }
+
+    /**
+     * Checks if value exist in current segment storage.
+     *
+     * @param string $name      The name to search for.
+     * @param bool   $in_flash  If specified, search will be matched against flash values.
+     *
+     * @return bool
+     */
+    public function has(string $name, bool $in_flash = false): bool
+    {
+        return $this->exist($name, $in_flash);
     }
 
     /**
