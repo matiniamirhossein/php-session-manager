@@ -5,13 +5,13 @@ PHP Session Manager (non-blocking, flash, segment, session encryption). Uses PHP
 ![file](https://img.shields.io/badge/FILE-completed-brightgreen.svg?style=flat-square)&nbsp;&nbsp;&nbsp;![cookie](https://img.shields.io/badge/COOKIE-completed-brightgreen.svg?style=flat-square)&nbsp;&nbsp;&nbsp;![pdo](https://img.shields.io/badge/PDO-completed-brightgreen.svg?style=flat-square)&nbsp;&nbsp;&nbsp;![memcached](https://img.shields.io/badge/MEMCACHED-completed-brightgreen.svg?style=flat-square)&nbsp;&nbsp;&nbsp;![redis](https://img.shields.io/badge/REDIS-active-brightgreen.svg?style=flat-square)&nbsp;&nbsp;&nbsp;[![license](https://img.shields.io/pypi/l/Django.svg?style=flat-square)]()&nbsp;&nbsp;&nbsp;[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg?style=flat-square)](http://php.net/releases/7_0_0.php)
 
 # Installation   
-You can download the Latest [release version ](https://github.com/Ghostff/Session/releases/) as a standalone, alternatively you can use [Composer](https://getcomposer.org/) 
+You can download the Latest [release version ](https://github.com/matiniamirhossein/php-session-manager/releases/) as a standalone, alternatively you can use [Composer](https://getcomposer.org/) 
 ```json
-$ composer require ghostff/session
+$ composer require matiniamirhossein/php-session-manager
 ```
 ```json
 "require": {
-    "ghostff/session": "^1.0"
+    "matiniamirhossein/php-session-manager": "dev-master"
 }
 ```    
 
@@ -81,17 +81,13 @@ $session->commit();
 ## Retrieving Session Data *:mixed*
 ```php
 echo $session->get('name'); # outputs foo
-echo $session->getOrDefault('unset_value', 'not found'); # outputs not found
 # Retrieving Segment
 echo $segment->get('name'); # outputs bar
-echo $segment->getOrDefault('unset_value', 'not found'); # outputs not found
 
 # Retrieving Flash
 echo $session->getFlash('name'); # outputs foobar
-echo $session->getFlashOrDefault('name', 'not found'); # outputs not found
 # Retrieving Segment Flash
 echo $segment->getFlash('name'); # outputs barfoo
-echo $segment->getFlashOrDefault('name', 'not found'); # outputs not found
 ```
 
 ## Removing Session Data *:Session*
