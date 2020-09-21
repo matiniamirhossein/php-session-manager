@@ -57,7 +57,7 @@ class Handler extends SetGet implements SessionHandlerInterface
         $time = time();
         foreach (glob("{$this->savePath}/sess_*") as $file)
         {
-            if (filemtime($file) + $max_life_time < $time && file_exists($file))
+            if (is_file($file) && filemtime($file) + $max_life_time < $time)
             {
                 unlink($file);
             }
